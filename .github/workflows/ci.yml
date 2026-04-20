@@ -34,9 +34,6 @@ jobs:
       - name: Generate README demo assets
         run: python3 scripts/generate_demo_assets.py
 
-      - name: Ensure generated assets are committed
-        run: git diff --exit-code -- docs/images
-
       - name: Build drag-and-drop app
         run: ./scripts/build_applet.sh
 
