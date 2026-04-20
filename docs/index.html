@@ -515,6 +515,7 @@
         <a class="pill" href="#features">Features</a>
         <a class="pill" href="#workflow">Workflow</a>
         <a class="pill" href="#install">Install</a>
+        <a class="pill" href="#faq">FAQ</a>
         <a class="pill" href="https://github.com/491034170/word-pdf-watermark-macos" target="_blank" rel="noreferrer">GitHub</a>
         <a class="button button-primary" href="https://github.com/491034170/word-pdf-watermark-macos/releases/tag/v1.0.1" target="_blank" rel="noreferrer">Download v1.0.1</a>
       </nav>
@@ -522,6 +523,22 @@
   </header>
 
   <main id="top">
+    <section class="section" style="padding: 24px 0 0;">
+      <div class="container">
+        <article class="card" style="display:flex; flex-wrap:wrap; gap:16px; align-items:center; justify-content:space-between;">
+          <div>
+            <div class="eyebrow" style="margin-bottom:10px;">Now live · GitHub Pages</div>
+            <h2 style="margin:0 0 8px; font-size: clamp(24px, 3vw, 34px); line-height:1.08; letter-spacing:-1.2px;">正式官网版落地页、下载页、源码页，现在已经打通</h2>
+            <p style="margin:0; color:var(--text-soft); max-width:760px;">Live site、GitHub repo、Release、CI、README 现在是一套统一对外呈现。对用户是下载入口，对开发者是完整可维护源码，对合作方是可信的项目证明。</p>
+          </div>
+          <div class="inline-links" style="margin-top:0;">
+            <a class="button button-secondary" href="https://github.com/491034170/word-pdf-watermark-macos/releases/tag/v1.0.1" target="_blank" rel="noreferrer">Latest release</a>
+            <a class="button button-secondary" href="https://github.com/491034170/word-pdf-watermark-macos/actions/workflows/ci.yml" target="_blank" rel="noreferrer">CI workflow</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
     <section class="hero">
       <div class="container hero-grid">
         <div class="hero-copy">
@@ -614,6 +631,34 @@
               <li>README demo asset generation</li>
               <li>`.app` 和 release zip 构建</li>
             </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-heading">
+          <span>Use cases</span>
+          <h2>不仅是“能用”，而是适合真实业务文件流</h2>
+          <p>如果你手里已经有 Word、PDF、报价单、合同、提案、样稿，这个工具是直接接在现有工作流上的，不要求你改习惯。</p>
+        </div>
+        <div class="feature-grid">
+          <article class="card">
+            <h3>内部资料分发</h3>
+            <p>给对内 PDF 统一打上“仅供内部使用”“审阅版”“样稿”等文字水印，降低转发失控的风险。</p>
+          </article>
+          <article class="card">
+            <h3>报价单 / 合同 / 提案</h3>
+            <p>先在熟悉的 Word 里编辑，再一键转成带水印 PDF，对外发送时更像正式交付物。</p>
+          </article>
+          <article class="card">
+            <h3>批量文档处理</h3>
+            <p>支持多文件一次处理，适合每周固定导出一批资料、给多个附件统一加水印的场景。</p>
+          </article>
+          <article class="card">
+            <h3>把桌面小工具做成像样项目</h3>
+            <p>它本身也是一个案例：如何把本地脚本整理成有 README、Release、License、CI、Pages 的正式仓库。</p>
           </article>
         </div>
       </div>
@@ -752,9 +797,37 @@ python3 word_pdf_watermark.py --watermark "仅供内部使用" file.docx</div>
               <li><strong>Bundled in app:</strong> script + dependencies + LICENSE</li>
             </ul>
             <div class="inline-links">
+              <a class="button button-secondary" href="https://github.com/491034170/word-pdf-watermark-macos" target="_blank" rel="noreferrer">View repository</a>
               <a class="button button-secondary" href="https://github.com/491034170/word-pdf-watermark-macos/releases/tag/v1.0.1" target="_blank" rel="noreferrer">View release</a>
-              <a class="button button-secondary" href="https://github.com/491034170/word-pdf-watermark-macos/actions" target="_blank" rel="noreferrer">View CI</a>
+              <a class="button button-secondary" href="https://github.com/491034170/word-pdf-watermark-macos/actions/workflows/ci.yml" target="_blank" rel="noreferrer">CI workflow</a>
             </div>
+          </article>
+        </div>
+      </div>
+    </section>
+    <section class="section" id="faq">
+      <div class="container">
+        <div class="section-heading">
+          <span>FAQ</span>
+          <h2>下载之前，别人通常会问的 4 个问题</h2>
+          <p>把这些问题先解释清楚，落地页就更像正式产品页，而不是“源码仓库的附属说明”。</p>
+        </div>
+        <div class="feature-grid">
+          <article class="card">
+            <h3>需要 LibreOffice 吗？</h3>
+            <p>只有在输入是 Word / RTF 时才需要。纯 PDF 加水印不依赖 LibreOffice。</p>
+          </article>
+          <article class="card">
+            <h3>Release `.app` 能不能直接用？</h3>
+            <p>可以。它已经自带核心脚本和 Python 依赖；目标机器仍需要具备 <span class="mono">python3</span>，这样打包后的启动器才能正常运行。</p>
+          </article>
+          <article class="card">
+            <h3>输出文件会放到哪里？</h3>
+            <p>默认生成在原文件旁边，命名为 <span class="mono">*_带水印.pdf</span>，不强行改你的文件组织方式。</p>
+          </article>
+          <article class="card">
+            <h3>能不能继续二次开发？</h3>
+            <p>可以。仓库里保留了源码、构建脚本、Release、MIT License 和 CI，后续继续做成更完整的 macOS 工具也顺手。</p>
           </article>
         </div>
       </div>
@@ -774,7 +847,7 @@ python3 word_pdf_watermark.py --watermark "仅供内部使用" file.docx</div>
           <li><a href="https://github.com/491034170/word-pdf-watermark-macos" target="_blank" rel="noreferrer">GitHub repository</a></li>
           <li><a href="https://github.com/491034170/word-pdf-watermark-macos/blob/main/README.md" target="_blank" rel="noreferrer">README</a></li>
           <li><a href="https://github.com/491034170/word-pdf-watermark-macos/releases/tag/v1.0.1" target="_blank" rel="noreferrer">Release v1.0.1</a></li>
-          <li><a href="https://github.com/491034170/word-pdf-watermark-macos/actions" target="_blank" rel="noreferrer">GitHub Actions</a></li>
+          <li><a href="https://github.com/491034170/word-pdf-watermark-macos/actions/workflows/ci.yml" target="_blank" rel="noreferrer">GitHub Actions</a></li>
         </ul>
       </article>
     </div>
