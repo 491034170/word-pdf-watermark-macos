@@ -16,6 +16,7 @@
   <p>
     <a href="#中文">中文</a> ·
     <a href="#english">English</a> ·
+    <a href="https://491034170.github.io/word-pdf-watermark-macos/">Live Site</a> ·
     <a href="https://github.com/491034170/word-pdf-watermark-macos/releases">Download Release</a>
   </p>
 </div>

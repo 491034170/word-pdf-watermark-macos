@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Word PDF Watermark (macOS)</title>
+  <meta name="description" content="A polished macOS utility for converting Word / PDF files into watermarked PDFs, with CLI, .command launcher, drag-and-drop .app, GitHub releases, and CI-verified packaging." />
+  <meta name="theme-color" content="#171717" />
+  <meta property="og:title" content="Word PDF Watermark (macOS)" />
+  <meta property="og:description" content="Turn Word / PDF files into watermarked PDFs on macOS." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://491034170.github.io/word-pdf-watermark-macos/" />
+  <meta property="og:image" content="https://491034170.github.io/word-pdf-watermark-macos/images/hero.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Word PDF Watermark (macOS)" />
+  <meta name="twitter:description" content="Turn Word / PDF files into watermarked PDFs on macOS." />
+  <link rel="canonical" href="https://491034170.github.io/word-pdf-watermark-macos/" />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #ffffff;
+      --bg-soft: #fafafa;
+      --surface: rgba(255, 255, 255, 0.86);
+      --text: #171717;
+      --text-soft: #4d4d4d;
+      --line: rgba(0, 0, 0, 0.08);
+      --line-soft: #ebebeb;
+      --blue: #0a72ef;
+      --pink: #de1d8d;
+      --red: #ff5b4f;
+      --green: #0f9f68;
+      --shadow-card: rgba(0, 0, 0, 0.08) 0px 0px 0px 1px, rgba(0, 0, 0, 0.04) 0px 2px 2px, rgba(0, 0, 0, 0.04) 0px 8px 20px -12px, #fafafa 0px 0px 0px 1px;
+      --shadow-soft: rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 22px;
+      --content: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: 'Geist', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% 12%, rgba(10, 114, 239, 0.10), transparent 26%),
+        radial-gradient(circle at 88% 8%, rgba(222, 29, 141, 0.10), transparent 24%),
+        radial-gradient(circle at 78% 72%, rgba(255, 91, 79, 0.08), transparent 26%),
+        linear-gradient(180deg, #ffffff 0%, #fbfcff 42%, #ffffff 100%);
+      line-height: 1.6;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    img { max-width: 100%; display: block; }
+
+    .container {
+      width: min(var(--content), calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(18px);
+      background: rgba(255, 255, 255, 0.76);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .nav {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.28px;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #171717 0%, #2b2b2b 100%);
+      color: white;
+      display: grid;
+      place-items: center;
+      box-shadow: var(--shadow-card);
+      font-size: 12px;
+      font-family: 'Geist Mono', ui-monospace, monospace;
+    }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .pill,
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 9999px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease, color 160ms ease;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .pill {
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.78);
+      color: var(--text-soft);
+    }
+
+    .hero {
+      padding: 72px 0 32px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+      gap: 28px;
+      align-items: center;
+    }
+
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      width: fit-content;
+      padding: 8px 14px;
+      border-radius: 9999px;
+      background: #f3f8ff;
+      color: #0068d6;
+      box-shadow: var(--shadow-soft);
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(42px, 7vw, 68px);
+      line-height: 1.02;
+      letter-spacing: -2.4px;
+      font-weight: 600;
+    }
+
+    .hero-copy p {
+      margin: 0;
+      font-size: clamp(18px, 2.2vw, 21px);
+      color: var(--text-soft);
+      max-width: 700px;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .button {
+      padding: 12px 18px;
+    }
+
+    .button-primary {
+      background: #171717;
+      color: white;
+    }
+
+    .button-secondary {
+      background: white;
+      color: #171717;
+    }
+
+    .button:hover,
+    .pill:hover {
+      transform: translateY(-1px);
+      box-shadow: rgba(0, 0, 0, 0.10) 0px 0px 0px 1px, rgba(0, 0, 0, 0.08) 0px 12px 28px -18px;
+    }
+
+    .hero-panel {
+      background: var(--surface);
+      border-radius: 28px;
+      box-shadow: var(--shadow-card);
+      padding: 18px;
+      overflow: hidden;
+    }
+
+    .hero-panel img {
+      border-radius: 18px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .stats {
+      padding: 18px 0 12px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-card);
+      padding: 18px;
+      min-height: 132px;
+    }
+
+    .stat-card h3 {
+      margin: 0 0 8px;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+    }
+
+    .stat-card p {
+      margin: 0;
+      font-size: 14px;
+      color: var(--text-soft);
+    }
+
+    .section {
+      padding: 52px 0;
+    }
+
+    .section-heading {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 22px;
+    }
+
+    .section-heading span {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--blue);
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      font-size: clamp(30px, 4vw, 44px);
+      line-height: 1.08;
+      letter-spacing: -1.6px;
+      font-weight: 600;
+    }
+
+    .section-heading p {
+      margin: 0;
+      color: var(--text-soft);
+      max-width: 760px;
+      font-size: 18px;
+    }
+
+    .feature-grid,
+    .install-grid,
+    .gallery-grid,
+    .footer-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .feature-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .install-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .gallery-grid {
+      grid-template-columns: 1.2fr 0.8fr;
+      align-items: start;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      padding: 22px;
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 24px;
+      line-height: 1.18;
+      letter-spacing: -0.9px;
+      font-weight: 600;
+    }
+
+    .card p,
+    .card li {
+      color: var(--text-soft);
+      font-size: 16px;
+      margin: 0;
+    }
+
+    .card ul {
+      margin: 16px 0 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .workflow-image,
+    .demo-image,
+    .preview-image {
+      overflow: hidden;
+      border-radius: 18px;
+      box-shadow: var(--shadow-soft);
+      background: white;
+    }
+
+    .workflow-grid {
+      display: grid;
+      grid-template-columns: 0.88fr 1.12fr;
+      gap: 18px;
+      align-items: center;
+    }
+
+    .color-steps {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .color-step {
+      border-radius: 18px;
+      padding: 16px 18px;
+      color: white;
+      font-size: 15px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .color-step strong {
+      display: block;
+      font-size: 18px;
+      margin-bottom: 4px;
+      letter-spacing: -0.4px;
+    }
+
+    .step-blue { background: linear-gradient(135deg, #0a72ef, #4ea2ff); }
+    .step-pink { background: linear-gradient(135deg, #de1d8d, #ff4aae); }
+    .step-red { background: linear-gradient(135deg, #ff5b4f, #ff8966); }
+
+    .code-block {
+      margin-top: 16px;
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: #171717;
+      color: #f5f5f5;
+      font-family: 'Geist Mono', ui-monospace, monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      overflow-x: auto;
+      box-shadow: var(--shadow-card);
+    }
+
+    .mini-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 14px;
+      padding: 8px 12px;
+      border-radius: 9999px;
+      background: #f3f8ff;
+      color: #0068d6;
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .release-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .release-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: #ffffff;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .release-item span {
+      font-size: 14px;
+      color: var(--text-soft);
+    }
+
+    .release-item strong {
+      display: block;
+      font-size: 16px;
+      letter-spacing: -0.28px;
+    }
+
+    .inline-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .footer {
+      padding: 28px 0 52px;
+    }
+
+    .footer-grid {
+      grid-template-columns: 1.2fr 0.8fr;
+      align-items: start;
+    }
+
+    .footer small,
+    .footer p,
+    .footer li {
+      color: var(--text-soft);
+      font-size: 14px;
+    }
+
+    .footer ul {
+      list-style: none;
+      padding: 0;
+      margin: 14px 0 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .mono {
+      font-family: 'Geist Mono', ui-monospace, monospace;
+    }
+
+    @media (max-width: 1040px) {
+      .hero-grid,
+      .workflow-grid,
+      .gallery-grid,
+      .footer-grid,
+      .install-grid,
+      .feature-grid,
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding-top: 40px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .container {
+        width: min(var(--content), calc(100% - 20px));
+      }
+
+      .nav {
+        padding: 10px 0;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .nav-links {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .card,
+      .stat-card,
+      .hero-panel {
+        padding: 18px;
+      }
+
+      h1 {
+        letter-spacing: -1.8px;
+      }
+
+      .section {
+        padding: 36px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="#top" aria-label="Word PDF Watermark home">
+        <span class="brand-mark">W/P</span>
+        <span>Word PDF Watermark <span style="color:#666; font-weight:500;">for macOS</span></span>
+      </a>
+      <nav class="nav-links" aria-label="Primary navigation">
+        <a class="pill" href="#features">Features</a>
+        <a class="pill" href="#workflow">Workflow</a>
+        <a class="pill" href="#install">Install</a>
+        <a class="pill" href="https://github.com/491034170/word-pdf-watermark-macos" target="_blank" rel="noreferrer">GitHub</a>
+        <a class="button button-primary" href="https://github.com/491034170/word-pdf-watermark-macos/releases/tag/v1.0.1" target="_blank" rel="noreferrer">Download v1.0.1</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <span class="eyebrow">macOS utility · Word / PDF → Watermark</span>
+          <h1>把 Word / PDF 快速处理成带文字水印的 PDF</h1>
+          <p>
+            A polished, open-source macOS workflow for converting Word / PDF files into watermarked PDFs.
+            支持 CLI、双击 `.command`、拖拽式 `.app`，并且已经带上 GitHub Release 与 macOS CI。
+          </p>
+          <div class="button-row">
+            <a class="button button-primary" href="https://github.com/491034170/word-pdf-watermark-macos/releases/tag/v1.0.1" target="_blank" rel="noreferrer">Download Release</a>
+            <a class="button button-secondary" href="https://github.com/491034170/word-pdf-watermark-macos" target="_blank" rel="noreferrer">View Repository</a>
+            <a class="button button-secondary" href="https://github.com/491034170/word-pdf-watermark-macos/blob/main/README.md" target="_blank" rel="noreferrer">Read Docs</a>
+          </div>
+          <div class="inline-links">
+            <span class="pill">MIT License</span>
+            <span class="pill">GitHub Actions CI passed</span>
+            <span class="pill">Release bundle available</span>
+            <span class="pill">Word / PDF / RTF supported</span>
+          </div>
+        </div>
+        <div class="hero-panel">
+          <img src="images/hero.png" alt="Word PDF Watermark hero preview" />
+        </div>
+      </div>
+    </section>
+
+    <section class="stats">
+      <div class="container stats-grid">
+        <article class="stat-card">
+          <h3>Three entry points</h3>
+          <p>CLI、`.command` 启动器、拖拽式 `.app`，覆盖自动化和日常使用。</p>
+        </article>
+        <article class="stat-card">
+          <h3>Source-first repository</h3>
+          <p>保留真正可维护的源码、打包脚本、README、Release 与 CI。</p>
+        </article>
+        <article class="stat-card">
+          <h3>CI-verified packaging</h3>
+          <p>GitHub Actions 会在 macOS runner 上真实验证 smoke test、`.app` 构建和 zip 打包。</p>
+        </article>
+        <article class="stat-card">
+          <h3>Download-ready</h3>
+          <p>当前最新版本为 <span class="mono">v1.0.1</span>，支持直接下载 zip 与 SHA256 校验。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="features">
+      <div class="container">
+        <div class="section-heading">
+          <span>Features</span>
+          <h2>适合真正拿去发给别人用的小工具仓库</h2>
+          <p>不是只把一个编译好的 `.app` 扔上去，而是把源码、发布、说明、校验全部整理成完整项目。</p>
+        </div>
+        <div class="feature-grid">
+          <article class="card">
+            <h3>Word / PDF / RTF 输入</h3>
+            <p>支持 `.doc` `.docx` `.dot` `.dotx` `.rtf` `.pdf`。PDF 直接加水印，Word / RTF 则先经 LibreOffice 转 PDF 再叠加水印。</p>
+            <ul>
+              <li>支持中文和英文水印文本</li>
+              <li>支持一次处理多个文件</li>
+              <li>输出文件落在原文件同目录</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Open-source friendly packaging</h3>
+            <p>仓库内置 app 构建脚本、release 打包脚本和 SHA256 输出，方便以后继续演进。</p>
+            <ul>
+              <li><span class="mono">scripts/build_applet.sh</span></li>
+              <li><span class="mono">scripts/build_release_bundle.sh</span></li>
+              <li><span class="mono">dist/word-pdf-watermark-macos-*.zip</span></li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Bundled runtime resources</h3>
+            <p>发布用 `.app` 会携带核心脚本、依赖和许可证，减少“别人下载后跑不起来”的概率。</p>
+            <ul>
+              <li><span class="mono">word_pdf_watermark.py</span></li>
+              <li><span class="mono">pypdf</span> / <span class="mono">reportlab</span></li>
+              <li><span class="mono">LICENSE</span></li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>macOS CI smoke test</h3>
+            <p>每次 push / pull request 都会在 GitHub Actions 的 macOS runner 上重新验证核心 happy path。</p>
+            <ul>
+              <li>CLI help 检查</li>
+              <li>PDF smoke test</li>
+              <li>README demo asset generation</li>
+              <li>`.app` 和 release zip 构建</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="workflow">
+      <div class="container workflow-grid">
+        <article class="card">
+          <div class="section-heading" style="margin-bottom: 14px;">
+            <span>Workflow</span>
+            <h2 style="font-size: clamp(28px, 4vw, 40px);">三步完成：选文件 → 输水印 → 导出结果</h2>
+            <p>不管你是从命令行调用，还是把文件拖到 App 上，核心流程都保持一致。</p>
+          </div>
+          <div class="color-steps">
+            <div class="color-step step-blue">
+              <strong>01 · Select files</strong>
+              选择 Word / PDF / RTF 文件，支持多文件批量处理。
+            </div>
+            <div class="color-step step-pink">
+              <strong>02 · Enter watermark</strong>
+              输入中文或英文水印文字，支持“仅供内部使用”“审阅版”等常见场景。
+            </div>
+            <div class="color-step step-red">
+              <strong>03 · Export PDF</strong>
+              在原文件旁生成 <span class="mono">*_带水印.pdf</span>，完成后即可直接发送或归档。
+            </div>
+          </div>
+          <span class="mini-note">Word / RTF conversion requires LibreOffice · PDF watermarking works directly</span>
+        </article>
+        <div class="workflow-image card" style="padding: 14px;">
+          <img src="images/workflow.png" alt="Workflow diagram for the macOS PDF watermark tool" />
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container gallery-grid">
+        <article class="card">
+          <div class="section-heading" style="margin-bottom: 14px;">
+            <span>Demo</span>
+            <h2 style="font-size: clamp(28px, 4vw, 40px);">GitHub 上也能一眼看懂它怎么工作</h2>
+            <p>仓库首页已经带上演示 GIF、流程图和产品化说明，不再是只有几行脚本的“半成品感”。</p>
+          </div>
+          <div class="demo-image">
+            <img src="images/demo.gif" alt="Animated demo showing the three-step flow" />
+          </div>
+        </article>
+        <div style="display:grid; gap:16px;">
+          <article class="card">
+            <h3>Source preview</h3>
+            <div class="preview-image" style="margin-top: 14px;">
+              <img src="images/sample-input.png" alt="Sample input document preview" />
+            </div>
+          </article>
+          <article class="card">
+            <h3>Output preview</h3>
+            <div class="preview-image" style="margin-top: 14px;">
+              <img src="images/sample-output.png" alt="Sample output document preview with watermark" />
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="install">
+      <div class="container">
+        <div class="section-heading">
+          <span>Install & Run</span>
+          <h2>从下载使用，到自己二次开发，都给你留好了入口</h2>
+          <p>如果你只是想直接用，下载 Release 即可；如果你想自己改，也有源码和构建脚本。</p>
+        </div>
+        <div class="install-grid">
+          <article class="card">
+            <h3>Download release</h3>
+            <p>适合最终用户。解压 zip 后得到 <span class="mono">Word转PDF加水印.app</span>，双击打开或直接拖文件进去。</p>
+            <div class="code-block">Latest release
+v1.0.1
+SHA256: 970b6600179c4ae00405ca80e1c99d669f46ccb1d2733dec161af22a3e8f40b3</div>
+          </article>
+          <article class="card">
+            <h3>Run from source</h3>
+            <p>适合本地开发、脚本集成或继续扩展功能。</p>
+            <div class="code-block">python3 -m pip install -r requirements.txt
+python3 word_pdf_watermark.py --watermark "仅供内部使用" file.docx</div>
+          </article>
+          <article class="card">
+            <h3>Rebuild the app</h3>
+            <p>适合二次分发、继续做 macOS 小工具封装，或者重新打 release。</p>
+            <div class="code-block">./scripts/build_applet.sh
+./scripts/build_release_bundle.sh v1.0.1</div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-heading">
+          <span>Release & Repo</span>
+          <h2>对外可下载，对内可维护</h2>
+          <p>这个项目现在同时具备“外部用户可直接下载使用”和“内部可继续维护演进”两种价值。</p>
+        </div>
+        <div class="feature-grid">
+          <article class="card">
+            <h3>What is inside the repo?</h3>
+            <div class="release-list">
+              <div class="release-item">
+                <div>
+                  <strong>README + demo assets</strong>
+                  <span>Hero image, workflow graphic, animated GIF</span>
+                </div>
+                <span class="mono">docs/</span>
+              </div>
+              <div class="release-item">
+                <div>
+                  <strong>Build + release scripts</strong>
+                  <span>App bundle and zip packaging automation</span>
+                </div>
+                <span class="mono">scripts/</span>
+              </div>
+              <div class="release-item">
+                <div>
+                  <strong>GitHub Actions CI</strong>
+                  <span>macOS smoke test pipeline</span>
+                </div>
+                <span class="mono">.github/</span>
+              </div>
+            </div>
+          </article>
+          <article class="card">
+            <h3>What still matters on the target Mac?</h3>
+            <p>Release `.app` 已自带 Python 依赖，但目标机器仍然建议具备标准运行环境。</p>
+            <ul>
+              <li><strong>Required:</strong> <span class="mono">python3</span></li>
+              <li><strong>Required for Word / RTF:</strong> LibreOffice</li>
+              <li><strong>Bundled in app:</strong> script + dependencies + LICENSE</li>
+            </ul>
+            <div class="inline-links">
+              <a class="button button-secondary" href="https://github.com/491034170/word-pdf-watermark-macos/releases/tag/v1.0.1" target="_blank" rel="noreferrer">View release</a>
+              <a class="button button-secondary" href="https://github.com/491034170/word-pdf-watermark-macos/actions" target="_blank" rel="noreferrer">View CI</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-grid">
+      <article class="card">
+        <h3 style="margin-top:0;">Word PDF Watermark</h3>
+        <p>一个已经整理成完整项目形态的 macOS 文档处理小工具：源码、说明、发布、校验都在线。</p>
+        <small>Copyright © 2026 天智工坊 · Tianmind Studio · MIT License</small>
+      </article>
+      <article class="card">
+        <h3 style="margin-top:0;">Quick links</h3>
+        <ul>
+          <li><a href="https://github.com/491034170/word-pdf-watermark-macos" target="_blank" rel="noreferrer">GitHub repository</a></li>
+          <li><a href="https://github.com/491034170/word-pdf-watermark-macos/blob/main/README.md" target="_blank" rel="noreferrer">README</a></li>
+          <li><a href="https://github.com/491034170/word-pdf-watermark-macos/releases/tag/v1.0.1" target="_blank" rel="noreferrer">Release v1.0.1</a></li>
+          <li><a href="https://github.com/491034170/word-pdf-watermark-macos/actions" target="_blank" rel="noreferrer">GitHub Actions</a></li>
+        </ul>
+      </article>
+    </div>
+  </footer>
+</body>
+</html>
