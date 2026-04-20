@@ -1,9 +1,51 @@
+on fileExists(posixPath)
+	try
+		do shell script "/usr/bin/test -f " & quoted form of posixPath
+		return true
+	on error
+		return false
+	end try
+end fileExists
+
+on directoryExists(posixPath)
+	try
+		do shell script "/usr/bin/test -d " & quoted form of posixPath
+		return true
+	on error
+		return false
+	end try
+end directoryExists
+
+on bundledPythonScriptPath()
+	try
+		return POSIX path of (path to resource "word_pdf_watermark.py")
+	on error
+		return missing value
+	end try
+end bundledPythonScriptPath
+
 on pythonScriptPath()
-	set appPath to POSIX path of (path to me)
-	set repoDir to do shell script "/usr/bin/dirname " & quoted form of appPath
-	set scriptPath to repoDir & "/word_pdf_watermark.py"
-	return scriptPath
+	set bundledPath to my bundledPythonScriptPath()
+	if bundledPath is not missing value then return bundledPath
+	
+	set meDir to do shell script "/usr/bin/dirname " & quoted form of (POSIX path of (path to me))
+	set candidate1 to meDir & "/word_pdf_watermark.py"
+	if my fileExists(candidate1) then return candidate1
+	
+	set parentDir to do shell script "cd " & quoted form of (meDir & "/..") & " && pwd"
+	set candidate2 to parentDir & "/word_pdf_watermark.py"
+	if my fileExists(candidate2) then return candidate2
+	
+	error "无法定位 word_pdf_watermark.py"
 end pythonScriptPath
+
+on pythonLibDirPath()
+	set scriptPath to my pythonScriptPath()
+	set resourceDir to do shell script "/usr/bin/dirname " & quoted form of scriptPath
+	set libsPath to resourceDir & "/python-libs"
+	if my directoryExists(libsPath) then return libsPath
+	return ""
+end pythonLibDirPath
 
 on askWatermark()
 	set dialogResult to display dialog "请输入水印文字" default answer "仅供内部使用" buttons {"取消", "确定"} default button "确定"
@@ -12,7 +54,15 @@ end askWatermark
 
 on buildCommand(droppedItems, watermarkText)
 	set scriptPath to my pythonScriptPath()
-	set cmd to quoted form of "/usr/bin/python3"
+	set libsPath to my pythonLibDirPath()
+	
+	if libsPath is not "" then
+		set cmd to "PYTHONPATH=" & quoted form of (libsPath & ":${PYTHONPATH:-}")
+		set cmd to cmd & space & quoted form of "/usr/bin/env" & space & quoted form of "python3"
+	else
+		set cmd to quoted form of "/usr/bin/env" & space & quoted form of "python3"
+	end if
+	
 	set cmd to cmd & space & quoted form of scriptPath
 	set cmd to cmd & space & "--no-ui"
 	set cmd to cmd & space & "--watermark"
