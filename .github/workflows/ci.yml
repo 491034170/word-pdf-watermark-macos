@@ -1,0 +1,86 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  smoke-test:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+
+      - name: Verify CLI help
+        run: python3 word_pdf_watermark.py --help
+
+      - name: Run PDF smoke test
+        run: ./scripts/smoke_test.sh
+
+      - name: Generate README demo assets
+        run: python3 scripts/generate_demo_assets.py
+
+      - name: Ensure generated assets are committed
+        run: git diff --exit-code -- docs/images
+
+      - name: Build drag-and-drop app
+        run: ./scripts/build_applet.sh
+
+      - name: Validate bundled app resources
+        run: |
+          APP="dist/Word转PDF加水印.app"
+          BUNDLED_INPUT="/tmp/ci-bundled-input.pdf"
+          BUNDLED_OUTPUT="/tmp/ci-bundled-input_带水印.pdf"
+
+          python3 - <<'PY' "$BUNDLED_INPUT"
+          from pathlib import Path
+          from reportlab.pdfgen import canvas
+          import sys
+
+          sample = Path(sys.argv[1])
+          c = canvas.Canvas(str(sample))
+          c.drawString(72, 760, 'Bundled app smoke test input')
+          c.save()
+          print(sample)
+          PY
+
+          test -f "$APP/Contents/Resources/word_pdf_watermark.py"
+          test -f "$APP/Contents/Resources/LICENSE"
+          test -d "$APP/Contents/Resources/python-libs/pypdf"
+          test -d "$APP/Contents/Resources/python-libs/reportlab"
+
+          PYTHONPATH="$APP/Contents/Resources/python-libs" \
+            python3 "$APP/Contents/Resources/word_pdf_watermark.py" \
+            --no-ui \
+            --watermark 'Bundled App CI' \
+            "$BUNDLED_INPUT"
+
+          test -f "$BUNDLED_OUTPUT"
+
+      - name: Build release bundle
+        run: |
+          ./scripts/build_release_bundle.sh v0.0.0-ci
+          test -f dist/word-pdf-watermark-macos-0.0.0-ci.zip
+          test -f dist/SHA256SUMS.txt
+
+      - name: Upload CI artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: word-pdf-watermark-macos-ci-bundle
+          path: |
+            dist/word-pdf-watermark-macos-0.0.0-ci.zip
+            dist/SHA256SUMS.txt

@@ -9,6 +9,8 @@
     <img src="https://img.shields.io/badge/Python-3-blue?logo=python" alt="Python 3" />
     <img src="https://img.shields.io/badge/LibreOffice-Optional%20for%20Word%20conversion-18A303?logo=libreoffice" alt="LibreOffice" />
     <img src="https://img.shields.io/github/v/release/491034170/word-pdf-watermark-macos?display_name=tag" alt="GitHub Release" />
+    <img src="https://github.com/491034170/word-pdf-watermark-macos/actions/workflows/ci.yml/badge.svg" alt="CI" />
+    <img src="https://img.shields.io/github/license/491034170/word-pdf-watermark-macos" alt="License" />
   </p>
 
   <p>
@@ -125,6 +127,7 @@ dist/Word转PDF加水印.app
 这个 `.app` 会把以下内容一起打包到 App 资源目录里：
 - `word_pdf_watermark.py`
 - `requirements.txt`
+- `LICENSE`
 - vendored Python dependencies: `pypdf`, `reportlab`
 
 ### 构建 Release 发布包
@@ -142,6 +145,28 @@ dist/word-pdf-watermark-macos-1.0.0.zip
 dist/SHA256SUMS.txt
 ```
 
+### 开发与自测
+
+如果你要在本地重新生成 README 视觉素材或跑自测：
+
+```bash
+python3 -m pip install -r requirements-dev.txt
+./scripts/smoke_test.sh
+```
+
+GitHub Actions 工作流位于：
+
+```text
+.github/workflows/ci.yml
+```
+
+它会在 `push`、`pull_request` 和手动触发时执行这些检查：
+- CLI 帮助检查
+- PDF smoke test
+- README 演示素材生成
+- `.app` 打包验证
+- Release zip 构建验证
+
 ### 运行环境
 
 - macOS
@@ -156,6 +181,9 @@ dist/SHA256SUMS.txt
 
 ```text
 .
+├── .github/
+│   └── workflows/
+│       └── ci.yml
 ├── assets/
 │   └── Word转PDF加水印.icns
 ├── docs/
@@ -165,14 +193,17 @@ dist/SHA256SUMS.txt
 │       ├── sample-input.png
 │       ├── sample-output.png
 │       └── workflow.png
+├── LICENSE
 ├── launcher.applescript
 ├── README.md
+├── requirements-dev.txt
 ├── requirements.txt
 ├── scripts/
 │   ├── Word转PDF加水印.command
 │   ├── build_applet.sh
 │   ├── build_release_bundle.sh
-│   └── generate_demo_assets.py
+│   ├── generate_demo_assets.py
+│   └── smoke_test.sh
 └── word_pdf_watermark.py
 ```
 
@@ -188,6 +219,10 @@ dist/SHA256SUMS.txt
   - 生成 `.zip` 发布包和 SHA256 校验文件
 - `scripts/generate_demo_assets.py`
   - 生成 README 所用的封面图、流程图和 GIF 演示素材
+- `scripts/smoke_test.sh`
+  - 用于本地与 CI 的基础 PDF 水印 smoke test
+- `.github/workflows/ci.yml`
+  - 在 GitHub Actions 上执行 macOS 自测流程
 
 ### 已验证能力
 
@@ -195,6 +230,10 @@ dist/SHA256SUMS.txt
 - 中文水印正常显示
 - 输出文件落在原文件同目录
 - 打包后的 App bundle 可调用随包依赖执行 Python 脚本
+
+### 许可证
+
+本项目使用 `MIT License`。
 
 ---
 
@@ -218,6 +257,7 @@ It supports three entry points:
 - Multiple files can be processed in one run
 - Output files are written next to the source file as `*_带水印.pdf`
 - Release `.app` bundles the required Python libraries (`pypdf`, `reportlab`)
+- The packaged `.app` also carries the project `LICENSE`
 
 ### Quick start
 
@@ -279,6 +319,28 @@ dist/word-pdf-watermark-macos-1.0.0.zip
 dist/SHA256SUMS.txt
 ```
 
+### Dev / self-check
+
+If you want to regenerate the README visuals or run local validation:
+
+```bash
+python3 -m pip install -r requirements-dev.txt
+./scripts/smoke_test.sh
+```
+
+The GitHub Actions workflow lives at:
+
+```text
+.github/workflows/ci.yml
+```
+
+It runs on `push`, `pull_request`, and manual dispatch, and verifies:
+- CLI help output
+- PDF smoke test
+- README demo asset generation
+- `.app` bundle build
+- release zip packaging
+
 ### Requirements
 
 - macOS
@@ -288,9 +350,12 @@ dist/SHA256SUMS.txt
 ### Project structure
 
 ```text
+.github/workflows/     GitHub Actions CI workflow
 assets/                app icon
 docs/images/           README visuals and demo GIF
+LICENSE                MIT license
 launcher.applescript   app launcher source
+requirements-dev.txt   developer/CI dependencies
 scripts/               build and helper scripts
 word_pdf_watermark.py  main conversion + watermark logic
 ```
@@ -301,3 +366,7 @@ word_pdf_watermark.py  main conversion + watermark logic
 - Chinese watermark rendering works correctly
 - Outputs are written next to the source file
 - Bundled app resources can execute with vendored Python dependencies
+
+### License
+
+This project is released under the `MIT License`.

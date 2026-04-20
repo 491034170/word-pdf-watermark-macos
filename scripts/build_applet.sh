@@ -21,6 +21,9 @@ mkdir -p "$RESOURCE_DIR/python-libs"
 
 cp "$REPO_DIR/word_pdf_watermark.py" "$RESOURCE_DIR/word_pdf_watermark.py"
 cp "$REPO_DIR/requirements.txt" "$RESOURCE_DIR/requirements.txt"
+if [[ -f "$REPO_DIR/LICENSE" ]]; then
+  cp "$REPO_DIR/LICENSE" "$RESOURCE_DIR/LICENSE"
+fi
 
 if [[ -f "$ICON_SOURCE" ]]; then
   cp "$ICON_SOURCE" "$OUT_APP/Contents/Resources/applet.icns"
